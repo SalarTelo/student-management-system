@@ -21,9 +21,14 @@
             <version>2.1.210</version>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>org.eclipse.persistence.jpa.modelgen.processor</artifactId>
+            <version>3.1.0-M1</version>
+            <scope>runtime</scope>
+        </dependency>
 
     </dependencies>
-
     <build>
         <finalName>student-management-system</finalName>
         <plugins>
