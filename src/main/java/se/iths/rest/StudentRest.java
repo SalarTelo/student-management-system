@@ -2,6 +2,8 @@ package se.iths.rest;
 
 
 import se.iths.entity.Student;
+import se.iths.exceptions.StudentEmailNotUniqueException;
+import se.iths.exceptions.StudentDoesNotExistException;
 import se.iths.service.StudentService;
 
 import javax.inject.Inject;
@@ -22,16 +24,22 @@ public class StudentRest {
         this.service = service;
     }
 
-    @Path("")
     @POST
     public Response createStudent(Student data){
+        var students = service.findStudentByEmail(data.getEmail());
+        if(students.size() > 0){
+            throw new StudentEmailNotUniqueException(data.getEmail());
+        }
         service.createStudent(data);
         return Response.ok(data).build();
     }
 
-    @Path("")
     @PUT
     public Response updateStudent(Student data){
+        var students = service.findStudentByEmail(data.getEmail());
+        if(students.size() > 0){
+            throw new StudentEmailNotUniqueException(data.getEmail());
+        }
         service.updateStudent(data);
         return Response.ok(data).build();
     }
@@ -41,14 +49,19 @@ public class StudentRest {
     public Response findStudentById(@PathParam("id") Long id){
         Student student = service.findStudentById(id);
         if (student == null) {
-
-            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                    .entity("Student with ID " + id + " was not found in database.").type(MediaType.TEXT_PLAIN_TYPE).build());
+            throw new StudentDoesNotExistException(id);
         }
         return Response.ok(student).build();
     }
 
-    @Path("")
+    @Path("query")
+    @GET
+    public Response findStudentByLastName(@QueryParam("lastName") String lastName){
+        List<Student> students = service.findStudentsByLastName(lastName);
+        return Response.ok(students).build();
+    }
+
+
     @GET
     public Response getAllStudents(){
         List<Student> students = service.getAllStudents();
@@ -59,6 +72,10 @@ public class StudentRest {
     @Path("{id}")
     @DELETE
     public Response deleteStudent(@PathParam("id") Long id){
+        Student student = service.findStudentById(id);
+        if (student == null) {
+            throw new StudentDoesNotExistException(id);
+        }
         service.deleteStudent(id);
         return Response.ok().build();
     }

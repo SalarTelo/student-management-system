@@ -24,11 +24,16 @@ public class StudentService {
     public Student findStudentById(Long id){
         return entityManager.find(Student.class, id);
     }
-
+    public List<Student> findStudentByEmail(String email){
+        return entityManager.createQuery("SELECT i FROM Student i WHERE i.email = '" + email + "'", Student.class).getResultList();
+    }
     public List<Student> getAllStudents(){
         return entityManager.createQuery("SELECT i from Student i", Student.class).getResultList();
     }
 
+    public List<Student> findStudentsByLastName(String name) {
+        return entityManager.createQuery("SELECT i FROM Student i WHERE i.lastName = '" + name + "'", Student.class).getResultList();
+    }
     public void deleteStudent(Long id){
         Student student = entityManager.find(Student.class, id);
         entityManager.remove(student);
