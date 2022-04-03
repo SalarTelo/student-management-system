@@ -37,7 +37,7 @@ public class StudentRest {
     @PUT
     public Response updateStudent(Student data){
         var students = service.findStudentByEmail(data.getEmail());
-        if(students.size() > 0){
+        if(students.size() > 0 && !students.get(0).getEmail().equals(data.getEmail())){
             throw new StudentEmailNotUniqueException(data.getEmail());
         }
         service.updateStudent(data);
