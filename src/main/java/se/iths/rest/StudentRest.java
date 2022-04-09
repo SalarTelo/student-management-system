@@ -17,37 +17,40 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 public class StudentRest {
 
-    StudentService service;
+    StudentService studentService;
 
     @Inject
     public StudentRest(StudentService service){
-        this.service = service;
+        this.studentService = service;
     }
 
     @POST
     public Response createStudent(Student data){
-        var students = service.findStudentByEmail(data.getEmail());
+        var students = studentService.findStudentByEmail(data.getEmail());
         if(students.size() > 0){
             throw new StudentEmailNotUniqueException(data.getEmail());
         }
-        service.createStudent(data);
+        studentService.createStudent(data);
         return Response.ok(data).build();
     }
 
     @PUT
     public Response updateStudent(Student data){
-        var students = service.findStudentByEmail(data.getEmail());
-        if(students.size() > 0 && !students.get(0).getEmail().equals(data.getEmail())){
+        var students = studentService.findStudentByEmail(data.getEmail());
+
+        //Does another student already have use this mail?
+        if(students.size() > 0 && !students.get(0).getId().equals(data.getId())){
             throw new StudentEmailNotUniqueException(data.getEmail());
         }
-        service.updateStudent(data);
+
+        studentService.updateStudent(data);
         return Response.ok(data).build();
     }
 
     @Path("{id}")
     @GET
     public Response findStudentById(@PathParam("id") Long id){
-        Student student = service.findStudentById(id);
+        Student student = studentService.findStudentById(id);
         if (student == null) {
             throw new StudentDoesNotExistException(id);
         }
@@ -57,14 +60,14 @@ public class StudentRest {
     @Path("query")
     @GET
     public Response findStudentByLastName(@QueryParam("lastName") String lastName){
-        List<Student> students = service.findStudentsByLastName(lastName);
+        List<Student> students = studentService.findStudentsByLastName(lastName);
         return Response.ok(students).build();
     }
 
 
     @GET
     public Response getAllStudents(){
-        List<Student> students = service.getAllStudents();
+        List<Student> students = studentService.getAllStudents();
         return Response.ok(students).build();
     }
 
@@ -72,11 +75,11 @@ public class StudentRest {
     @Path("{id}")
     @DELETE
     public Response deleteStudent(@PathParam("id") Long id){
-        Student student = service.findStudentById(id);
+        Student student = studentService.findStudentById(id);
         if (student == null) {
             throw new StudentDoesNotExistException(id);
         }
-        service.deleteStudent(id);
+        studentService.deleteStudent(id);
         return Response.ok().build();
     }
 
