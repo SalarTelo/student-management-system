@@ -34,7 +34,7 @@ public class StudentRest {
         return Response.ok(data).build();
     }
 
-    @PUT
+     @PUT
     public Response updateStudent(Student data){
         var students = studentService.findStudentByEmail(data.getEmail());
 
@@ -79,8 +79,8 @@ public class StudentRest {
         if (student == null) {
             throw new StudentDoesNotExistException(id);
         }
-        studentService.deleteStudent(id);
-        return Response.ok().build();
+        studentService.deleteStudent(student);
+        return Response.ok(studentService.getAllStudents()).build();
     }
 
 }

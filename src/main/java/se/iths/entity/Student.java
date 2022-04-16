@@ -1,11 +1,14 @@
 package se.iths.entity;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Table(name = "students")
 @Entity
 public class Student {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     private Long id;
 
@@ -13,15 +16,24 @@ public class Student {
     private String firstName;
     @Column(nullable = false)
     private String lastName;
-
     @Column(unique = true, nullable = false)
     private String email;
-
     @Column(nullable = true)
     private String phoneNumber;
 
-    public Student(){}
+    @ManyToMany(mappedBy = "students")
+    private List<Subject> subjects = new ArrayList<>();
 
+    @JsonbTransient
+    public List<Subject> getSubjects() {
+        return subjects;
+    }
+    public void setSubjects(List<Subject> subjects) {
+        this.subjects = subjects;
+    }
+
+    public Student() {
+    }
     public Student(String firstName, String lastName, String email, String phoneNumber) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -67,5 +79,19 @@ public class Student {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Student student = (Student) o;
+
+        if (id != null ? !id.equals(student.id) : student.id != null) return false;
+        if (firstName != null ? !firstName.equals(student.firstName) : student.firstName != null) return false;
+        if (lastName != null ? !lastName.equals(student.lastName) : student.lastName != null) return false;
+        if (email != null ? !email.equals(student.email) : student.email != null) return false;
+        return phoneNumber != null ? phoneNumber.equals(student.phoneNumber) : student.phoneNumber == null;
     }
 }

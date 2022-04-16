@@ -2,6 +2,8 @@ package se.iths.util;
 
 
 import se.iths.entity.Student;
+import se.iths.entity.Subject;
+import se.iths.entity.Teacher;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
@@ -26,12 +28,33 @@ public class SampleDataGenerator {
         Student student5 = new Student("kalle", "lutent", "kalle.lutent@gmail.com", "0732374135");
         Student student6 = new Student("tommy", "lundin", "tommy.lundin@gmail.com", "0732524122");
 
-        entityManager.persist(student1);
+        Teacher teacher1 = new Teacher();
+        teacher1.setName("Lars Mattsson");
+        Teacher teacher2 = new Teacher();
+        teacher2.setName("Karin Somera");
+        Teacher teacher3 = new Teacher();
+        teacher3.setName("Maria Bilic");
+
+        Subject subject = new Subject();
+        subject.setName("Matte 2");
+
+        subject.setTeacher(teacher1);
+        subject.addStudent(student1);
+        subject.addStudent(student6);
+
+
+        entityManager.persist(subject);
+        entityManager.persist(teacher2);
+        entityManager.persist(teacher3);
         entityManager.persist(student2);
         entityManager.persist(student3);
         entityManager.persist(student4);
         entityManager.persist(student5);
-        entityManager.persist(student6);
+
+
+
+
+
     }
 
 }
